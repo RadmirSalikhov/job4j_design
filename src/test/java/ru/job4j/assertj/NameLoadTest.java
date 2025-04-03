@@ -13,6 +13,14 @@ class NameLoadTest {
     }
 
     @Test
+    void whenParseEmptyNamesThenThrownException() {
+        NameLoad nameLoad = new NameLoad();
+        assertThatThrownBy(nameLoad::parse)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("is empty");
+    }
+
+    @Test
     void whenParseNameWithoutKeyThenThrownException() {
         NameLoad nameLoad = new NameLoad();
         String[] names = {"key=value", "=value"};
