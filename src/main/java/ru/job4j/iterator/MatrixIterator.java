@@ -16,12 +16,10 @@ public class MatrixIterator implements Iterator<Integer> {
 
     @Override
     public boolean hasNext() {
-        // Пропускаем пустые строки и элементы в пустых строках
         while (row < data.length && (data[row] == null || column >= data[row].length)) {
             row++;      // Переходим к следующей строке
             column = 0; // Сбрасываем индекс столбца на 0
         }
-        // Проверяем, есть ли элементы в текущей строке
         return row < data.length && column < data[row].length;
     }
 
