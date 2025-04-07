@@ -10,7 +10,7 @@ public class EvenNumbersIterator implements Iterator<Integer> {
 
     public EvenNumbersIterator(int[] data) {
         this.data = data;
-        this.index = 0;  // Начинаем с первого элемента массива
+        this.index = 0;
     }
 
     @Override
@@ -32,7 +32,6 @@ public class EvenNumbersIterator implements Iterator<Integer> {
      * @return {@code true}, если найдено чётное число, {@code false} если все чётные числа были перебраны.
      */
     private boolean findNextEven() {
-        // Пропускаем элементы, пока не найдем чётное число
         while (index < data.length && data[index] % 2 != 0) {
             index++;
         }
