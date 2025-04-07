@@ -17,8 +17,8 @@ public class MatrixIterator implements Iterator<Integer> {
     @Override
     public boolean hasNext() {
         while (row < data.length && (data[row] == null || column >= data[row].length)) {
-            row++;      // Переходим к следующей строке
-            column = 0; // Сбрасываем индекс столбца на 0
+            row++;
+            column = 0;
         }
         return row < data.length && column < data[row].length;
     }
@@ -28,13 +28,12 @@ public class MatrixIterator implements Iterator<Integer> {
         if (!hasNext()) {
             throw new NoSuchElementException();
         }
-        int value = data[row][column];  // Получаем текущий элемент
-        // Переходим к следующему элементу
+        int value = data[row][column];
         if (column < data[row].length - 1) {
-            column++;  // Если есть элементы в текущей строке, двигаемся вправо по столбцам
+            column++;
         } else {
-            column = 0;  // Если дошли до конца строки, переходим к первому столбцу следующей строки
-            row++;       // Переходим к следующей строке
+            column = 0;
+            row++;
         }
         return value;
     }
