@@ -13,9 +13,17 @@ public class NonNullIterator implements Iterator<Integer> {
         this.index = 0;
     }
 
+    /**
+     * Находим следующее не null значение в массиве.
+     *
+     * @return {@code true}, если найдено не null значение, {@code false} если все чётные числа были перебраны.
+     */
     @Override
     public boolean hasNext() {
-        return findNextNotNullEven();
+        while (index < data.length && data[index] == null) {
+            index++;
+        }
+        return index < data.length;
     }
 
     @Override
@@ -24,17 +32,5 @@ public class NonNullIterator implements Iterator<Integer> {
             throw new NoSuchElementException();
         }
         return data[index++];
-    }
-
-    /**
-     * Находит следующее не null значение в массиве.
-     *
-     * @return {@code true}, если найдено не null значение, {@code false} если все чётные числа были перебраны.
-     */
-    private boolean findNextNotNullEven() {
-        while (index < data.length && data[index] == null) {
-            index++;
-        }
-        return index < data.length;
     }
 }
