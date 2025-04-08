@@ -13,9 +13,17 @@ public class EvenNumbersIterator implements Iterator<Integer> {
         this.index = 0;
     }
 
+    /**
+     * Находим следующее чётное число в массиве.
+     *
+     * @return {@code true}, если найдено чётное число, {@code false} если все чётные числа были перебраны.
+     */
     @Override
     public boolean hasNext() {
-        return findNextEven();
+        while (index < data.length && data[index] % 2 != 0) {
+            index++;
+        }
+        return index < data.length;
     }
 
     @Override
@@ -24,17 +32,5 @@ public class EvenNumbersIterator implements Iterator<Integer> {
             throw new NoSuchElementException();
         }
         return data[index++];
-    }
-
-    /**
-     * Находит следующее чётное число в массиве.
-     *
-     * @return {@code true}, если найдено чётное число, {@code false} если все чётные числа были перебраны.
-     */
-    private boolean findNextEven() {
-        while (index < data.length && data[index] % 2 != 0) {
-            index++;
-        }
-        return index < data.length;
     }
 }
