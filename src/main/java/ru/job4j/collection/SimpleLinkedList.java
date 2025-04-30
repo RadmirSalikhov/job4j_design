@@ -18,9 +18,12 @@ public class SimpleLinkedList<E> implements SimpleLinked<E> {
         if (head == null) {
             head = newNode;
         } else {
-            tail.next = newNode;
+            Node<E> current = head;
+            while (current.next != null) {
+                current = current.next;
+            }
+            current.next = new Node<>(value, null);
         }
-        tail = newNode;
         size++;
         modCount++;
     }
