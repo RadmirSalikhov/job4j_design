@@ -4,16 +4,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.NoSuchElementException;
 
-class SimpleLinkedListTest {
+class ForwardLinkedTest {
 
-    private SimpleLinked<Integer> list;
+    private ForwardLinked<Integer> list;
 
     @BeforeEach
     public void initData() {
-        list = new SimpleLinkedList<>();
+        list = new ForwardLinked<>();
         list.add(1);
         list.add(2);
     }
@@ -24,6 +25,13 @@ class SimpleLinkedListTest {
         list.add(3);
         list.add(4);
         assertThat(list).hasSize(4);
+    }
+
+    @Test
+    void checkAdd() {
+        assertThat(list).containsExactly(1, 2);
+        list.add(3);
+        assertThat(list).containsExactly(1, 2, 3);
     }
 
     @Test
@@ -43,9 +51,52 @@ class SimpleLinkedListTest {
     }
 
     @Test
+    void whenGetNegateIndexThenExceptionThrown() {
+        assertThatThrownBy(() -> list.get(-1))
+                .isInstanceOf(IndexOutOfBoundsException.class);
+    }
+
+    @Test
+    void whenAddAndDeleteFirstThenOk() {
+        assertThat(list).containsExactly(1, 2);
+        list.add(3);
+        assertThat(list).containsExactly(1, 2, 3);
+        assertThat(list.deleteFirst()).isEqualTo(1);
+        assertThat(list).containsExactly(2, 3);
+        assertThat(list.deleteFirst()).isEqualTo(2);
+        assertThat(list).containsExactly(3);
+    }
+
+    @Test
+    void whenDeleteFirstFromEmptyListThenException() {
+        ForwardLinked<Integer> list = new ForwardLinked<>();
+        assertThat(list).isEmpty();
+        assertThatThrownBy(list::deleteFirst)
+                .isInstanceOf(NoSuchElementException.class);
+    }
+
+    @Test
     void whenAddIterHasNextTrue() {
         Iterator<Integer> iterator = list.iterator();
         assertThat(iterator.hasNext()).isTrue();
+    }
+
+    @Test
+    void whenHasIteratorAndAddThenHasNextExceptionThrown() {
+        Iterator<Integer> iterator = list.iterator();
+        assertThat(iterator.hasNext()).isTrue();
+        list.add(3);
+        assertThatThrownBy(iterator::hasNext)
+                .isInstanceOf(ConcurrentModificationException.class);
+    }
+
+    @Test
+    void whenHasIteratorAndAddThenNextExceptionThrown() {
+        Iterator<Integer> iterator = list.iterator();
+        assertThat(iterator.hasNext()).isTrue();
+        list.add(3);
+        assertThatThrownBy(iterator::next)
+                .isInstanceOf(ConcurrentModificationException.class);
     }
 
     @Test
@@ -56,8 +107,9 @@ class SimpleLinkedListTest {
 
     @Test
     void whenEmptyIterHashNextFalse() {
-        LinkedList<Integer> list = new LinkedList<>();
+        ForwardLinked<Integer> list = new ForwardLinked<>();
         Iterator<Integer> iterator = list.iterator();
+        assertThat(iterator.hasNext()).isFalse();
         assertThat(iterator.hasNext()).isFalse();
     }
 
