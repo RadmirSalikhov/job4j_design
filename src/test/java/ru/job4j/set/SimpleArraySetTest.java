@@ -45,7 +45,6 @@ class SimpleArraySetTest {
             assertThat(set.add(i)).isTrue();
             assertThat(set.contains(i)).isTrue();
         }
-
         for (int i = 0; i < 100; i++) {
             assertThat(set.add(i)).isFalse();
         }
@@ -57,7 +56,6 @@ class SimpleArraySetTest {
         set.add("java");
         set.add("kotlin");
         set.add("groovy");
-
         assertThat(set.contains("java")).isTrue();
         assertThat(set.contains("kotlin")).isTrue();
         assertThat(set.contains("groovy")).isTrue();
