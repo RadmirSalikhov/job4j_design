@@ -59,6 +59,6 @@ class SimpleArraySetTest {
         assertThat(set.contains("java")).isTrue();
         assertThat(set.contains("kotlin")).isTrue();
         assertThat(set.contains("groovy")).isTrue();
-        assertThat(set.contains("scala")).isFalse(); // не добавляли
+        assertThat(set.contains("scala")).isFalse();
     }
 }
