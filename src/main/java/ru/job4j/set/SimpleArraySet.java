@@ -6,25 +6,28 @@ import java.util.Objects;
 
 public class SimpleArraySet<T> implements SimpleSet<T> {
 
-    private SimpleArrayList<T> set = new SimpleArrayList<>(0);
+    private final SimpleArrayList<T> set = new SimpleArrayList<>(0);
 
     @Override
     public boolean add(T value) {
+        boolean result = false;
         if (!contains(value)) {
             set.add(value);
-            return true;
+            result = true;
         }
-        return false;
+        return result;
     }
 
     @Override
     public boolean contains(T value) {
+        boolean result = false;
         for (T element : set) {
             if (Objects.equals(element, value)) {
-                return true;
+                result = true;
+                break;
             }
         }
-        return false;
+        return result;
     }
 
     @Override
