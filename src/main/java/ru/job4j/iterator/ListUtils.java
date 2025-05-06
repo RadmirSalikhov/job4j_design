@@ -33,7 +33,13 @@ public class ListUtils {
     }
 
     public static <T> void removeIf(List<T> list, Predicate<T> filter) {
-        list.removeIf(filter);
+        ListIterator<T> iterator = list.listIterator();
+        while (iterator.hasNext()) {
+            T value = iterator.next();
+            if (filter.test(value)) {
+                iterator.remove();
+            }
+        }
     }
 
     public static <T> void replaceIf(List<T> list, Predicate<T> filter, T value) {
