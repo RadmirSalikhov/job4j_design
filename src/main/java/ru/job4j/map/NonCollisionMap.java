@@ -9,71 +9,53 @@ public class NonCollisionMap<K, V> implements SimpleMap<K, V> {
     private static final float LOAD_FACTOR = 0.75f;
 
     private int capacity = 8;
-
     private int count = 0;
-
     private int modCount = 0;
 
     private MapEntry<K, V>[] table = new MapEntry[capacity];
 
     @Override
     public boolean put(K key, V value) {
-        boolean result = false;
-
         if (count >= LOAD_FACTOR * capacity) {
             expand();
         }
 
-        int indexOfBucket = getIndexOfBucket(key);
-
-        if (table[indexOfBucket] == null) {
-            table[indexOfBucket] = new MapEntry<>(key, value);
+        int index = getIndexOfBucket(key);
+        if (table[index] == null) {
+            table[index] = new MapEntry<>(key, value);
             count++;
             modCount++;
-            result = true;
+            return true;
         }
-
-        return result;
+        return false;
     }
 
     @Override
     public V get(K key) {
-        V result = null;
-
-        int indexOfBucket = getIndexOfBucket(key);
-
-        if (table[indexOfBucket] != null) {
-            MapEntry<K, V> mapEntry = table[indexOfBucket];
-            int hashCode = Objects.hashCode(key);
-            if (hashCode == Objects.hashCode(mapEntry.key) && Objects.equals(mapEntry.key, key)) {
-                result = mapEntry.value;
-            }
+        int index = getIndexOfBucket(key);
+        MapEntry<K, V> entry = table[index];
+        if (entry != null && keysEqual(entry.key, key)) {
+            return entry.value;
         }
-        return result;
+        return null;
     }
 
     @Override
     public boolean remove(K key) {
-        boolean result = false;
-
-        int indexOfBucket = getIndexOfBucket(key);
-
-        if (table[indexOfBucket] != null) {
-            MapEntry<K, V> mapEntry = table[indexOfBucket];
-            int hashCode = Objects.hashCode(key);
-            if (hashCode == Objects.hashCode(mapEntry.key) && Objects.equals(mapEntry.key, key)) {
-                table[indexOfBucket] = null;
-                count--;
-                modCount++;
-                result = true;
-            }
+        int index = getIndexOfBucket(key);
+        MapEntry<K, V> entry = table[index];
+        if (entry != null && keysEqual(entry.key, key)) {
+            table[index] = null;
+            count--;
+            modCount++;
+            return true;
         }
-        return result;
+        return false;
     }
 
     @Override
     public Iterator<K> iterator() {
-        return new Iterator<K>() {
+        return new Iterator<>() {
             private int index = 0;
             private final int expectedModCount = modCount;
 
@@ -82,10 +64,10 @@ public class NonCollisionMap<K, V> implements SimpleMap<K, V> {
                 if (expectedModCount != modCount) {
                     throw new ConcurrentModificationException();
                 }
-                while (index < table.length && table[index] == null) {
+                while (index < capacity && table[index] == null) {
                     index++;
                 }
-                return index < table.length;
+                return index < capacity;
             }
 
             @Override
@@ -103,42 +85,36 @@ public class NonCollisionMap<K, V> implements SimpleMap<K, V> {
     }
 
     private int indexFor(int hash) {
-        return hash % table.length;
-    }
-
-    private void expand() {
-        int newCapacity = capacity * 2;
-        MapEntry<K, V>[] newTable = new MapEntry[newCapacity];
-        for (MapEntry<K, V> entry : table) {
-
-            if (entry != null) {
-                K key = entry.key;
-                V value = entry.value;
-
-                int indexOfBucket = getIndexOfBucketForNewCapacity(key, newCapacity);
-                newTable[indexOfBucket] = new MapEntry<>(key, value);
-            }
-        }
-        table = newTable;
-        capacity = newCapacity;
+        return hash % capacity;
     }
 
     private int getIndexOfBucket(K key) {
         int hashCode = Objects.hashCode(key);
-        return indexFor(hash(hashCode));
+        int hash = hash(hashCode);
+        return indexFor(hash);
     }
 
-    private int getIndexOfBucketForNewCapacity(K key, int newCapacity) {
-        int hashCode = Objects.hashCode(key);
-        int hash = hash(hashCode);
-        return hash % newCapacity;
+    private boolean keysEqual(K key1, K key2) {
+        return Objects.hashCode(key1) == Objects.hashCode(key2) && Objects.equals(key1, key2);
+    }
+
+    private void expand() {
+        capacity *= 2;
+        MapEntry<K, V>[] oldTable = table;
+        table = new MapEntry[capacity];
+        for (MapEntry<K, V> entry : oldTable) {
+            if (entry != null) {
+                int newIndex = getIndexOfBucket(entry.key);
+                table[newIndex] = entry;
+            }
+        }
     }
 
     private static class MapEntry<K, V> {
-        K key;
-        V value;
+        final K key;
+        final V value;
 
-        public MapEntry(K key, V value) {
+        MapEntry(K key, V value) {
             this.key = key;
             this.value = value;
         }
