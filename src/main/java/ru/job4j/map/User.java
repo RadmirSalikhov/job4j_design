@@ -18,7 +18,7 @@ public class User {
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return Objects.hash(name, children, birthday);
     }
 
     @Override
@@ -57,6 +57,8 @@ public class User {
 
         System.out.printf("user1 - хэшкод: %s, хэш: %s, бакет: %s%n", hashCode1, hash1, bucket1);
         System.out.printf("user2 - хэшкод: %s, хэш: %s, бакет: %s%n", hashCode2, hash2, bucket2);
+        System.out.println();
+        System.out.println("Равны ли объекты по equals: " + user1.equals(user2));
 
         System.out.println("Содержимое карты:");
         for (Map.Entry<User, Object> entry : map.entrySet()) {
